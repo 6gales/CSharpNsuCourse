@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using BookShop.Data;
+﻿using System.Threading.Tasks;
 
 namespace BookShop.Logic
 {
     public interface IBookProvider
     {
-        IEnumerable<BookInstance> ProvideBooks(decimal maxPrice, int maxCount);
+        Task OrderBooks(decimal maxPrice, int maxCount);
     }
 }
