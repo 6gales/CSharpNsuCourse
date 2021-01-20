@@ -6,6 +6,8 @@ namespace BookShop.Data.Entities
 {
     public sealed class Author : IEquatable<Author>
     {
+        #warning я встречал такой подход, мне он просто не нравится. слишком как-то получается на много строк может быть разнесена конфигурация
+        #warning ну и fluent api EFa всё-таки позволяет больше. 
         [Key]
         public int Id { get; set; }
 

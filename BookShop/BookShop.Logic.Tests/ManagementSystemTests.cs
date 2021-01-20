@@ -9,6 +9,7 @@ namespace BookShop.Logic.Tests
     [TestFixture]
     public sealed class ManagementSystemTests
     {
+    #warning закоменченый код - зло. если код не нужен - лучше его удалить
         //[Test]
         //public void SellBookTest_()
         //{

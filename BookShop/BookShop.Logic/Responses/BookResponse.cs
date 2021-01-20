@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace BookShop.Logic.Responses
 {
+    #warning обычно то, что уходит с бэка на фронт называется state 
     public sealed class BookResponse
     {
         public int Id { get; set; }

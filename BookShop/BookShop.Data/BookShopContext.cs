@@ -9,6 +9,8 @@ namespace BookShop.Data
 {
     public sealed class BookShopContext : DbContext
     {
+        #warning все эти проперти не обязательные перечислять тут. можно вместо обращения к пропертям (а у тебя к ним и так нет ообращений) 
+        #warning использовать Set<Book> например
         public DbSet<ShopState> ShopStates { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Genre> Genres { get; set; }

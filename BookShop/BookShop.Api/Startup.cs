@@ -27,12 +27,15 @@ namespace BookShop.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            #warning то что этот метод для конфигурации вынес в шарёную сборку - плюсик, молодец
             services.AddMassTransitConfiguration<ProvideBookResponseConsumer>(Configuration);
 
             services.AddSingleton<IBookProvider, ProvideBookRequestProducer>();
             services.AddSingleton(sp => new BookShopContextFactory(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddSingleton(sp =>
+                #warning можно просто добавить BookShopService как синглтон и всё, остальные же зависимости зареганы в DI, т.ч. 
+                #warning они смогут прокинуться
                 new BookShopService(1, 
                     sp.GetService<BookShopContextFactory>() ?? throw new ArgumentNullException(),
                     sp.GetService<IBookProvider>() ?? throw new ArgumentNullException()));

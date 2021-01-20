@@ -81,6 +81,7 @@ namespace BookShop.Logic
 
         public async Task<BookResponse> UpdateBook(UpdateBookRequest updateBookRequest)
         {
+            #warning хорошо сделал этот метод, молодец
             await using var context = _contextFactory.GetContext();
             var bookInstance = await context.GetById<BookInstance>(updateBookRequest.Id);
             if (bookInstance is null)
@@ -108,6 +109,9 @@ namespace BookShop.Logic
             {
                 bookInstance.Book.Genres = context.GetOrCreateMany(updateBookRequest.Genres, g => new Genre {Name = g});
             }
+            
+            #warning разве что можно добавить требование для updateBookRequest, что нулами там ничего быть не может 
+            #warning и просто брать все поля, которые пришли там, и обновлять данные в bookInstance
 
             await context.SaveChangesAsync();
             return await InstanceToResponse(context, bookInstance);

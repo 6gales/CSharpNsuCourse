@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace BookShop.Logic.Requests
 {
+    #warning обычно то, что приходит с фронта на бэк называется модель. но это так, для общей информации
     public sealed class CreateBookRequest
     {
         public string Title { get; set; } = string.Empty;
