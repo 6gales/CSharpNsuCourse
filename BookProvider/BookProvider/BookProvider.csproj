@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MassTransit" Version="5.5.6" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="5.5.6" />
+		<PackageReference Include="MassTransit.AspNetCore" Version="5.5.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="BookShop.MessageContract">
+			<HintPath>..\..\BookShop.MessageContract\BookShop.MessageContract\bin\Debug\netcoreapp3.1\BookShop.MessageContract.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+</Project>

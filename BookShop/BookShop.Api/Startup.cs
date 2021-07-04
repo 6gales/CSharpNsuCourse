@@ -1,17 +1,18 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using BookShop.Api.Proxy;
+using System.Collections.Specialized;
+using BookShop.Api.Jobs;
+using BookShop.Api.Rabbit;
+using BookShop.Data;
+using BookShop.Logic;
+using BookShop.MessageContract;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 
 namespace BookShop.Api
 {
@@ -24,15 +25,37 @@ namespace BookShop.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #warning то что этот метод для конфигурации вынес в шарёную сборку - плюсик, молодец
+            services.AddMassTransitConfiguration<ProvideBookResponseConsumer>(Configuration);
+
+            services.AddSingleton<IBookProvider, ProvideBookRequestProducer>();
+            services.AddSingleton(sp => new BookShopContextFactory(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddSingleton(sp =>
+                #warning можно просто добавить BookShopService как синглтон и всё, остальные же зависимости зареганы в DI, т.ч. 
+                #warning они смогут прокинуться
+                new BookShopService(1, 
+                    sp.GetService<BookShopContextFactory>() ?? throw new ArgumentNullException(),
+                    sp.GetService<IBookProvider>() ?? throw new ArgumentNullException()));
+
+            services.AddSingleton<IJobFactory, InjectableJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>(isp =>
+            {
+                var properties = new NameValueCollection
+                {
+                    ["quartz.scheduler.interruptJobsOnShutdownWithWait"] = "true",
+                    ["quartz.scheduler.interruptJobsOnShutdown"] = "true"
+                };
+                return new StdSchedulerFactory(properties);
+            });
+            services.AddSingleton<CheckBookShopStateJob>();
+            services.AddHostedService<QuartzHostedService>();
+
             services.AddControllers();
-            services.AddSingleton<HttpClient>();
-            services.AddSingleton<IBookServiceProxy, BookServiceProxy>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
